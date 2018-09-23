@@ -79,7 +79,7 @@ class RabbitMQListenCommand extends Command {
 					if ( $event[0] !== '\\' )
 						$event = '\\' . $event;
 
-					$eventObject = new $event( json_decode( $msg->body, true ) );
+					$eventObject = new $event( $this->unserialize($msg) );
 					if ( $eventObject instanceof TakesRoutingKey )
 						$eventObject->setRoutingKey( $routingKey );
 					if ( $eventObject instanceof TakesRoutingMatches )
@@ -188,4 +188,14 @@ class RabbitMQListenCommand extends Command {
 		}
 
 	}
+
+    /**
+     * TODO: add configuration
+     *
+     * @return mixed
+     */
+	protected function unserialize($msg)
+    {
+        return unserialize($msg->body);
+    }
 }

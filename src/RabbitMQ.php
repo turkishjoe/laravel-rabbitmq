@@ -76,7 +76,7 @@ class RabbitMQ
 		if( config('laravel-rabbitmq.queues' . $queueIdentifier . '.durable') )
 			$properties['delivery_mode'] = AMQPMessage::DELIVERY_MODE_PERSISTENT;
 
-		$msg = new AMQPMessage(json_encode($this->data), $properties);
+		$msg = new AMQPMessage($this->serialize(), $properties);
 
 		$messageCounter->getChannel()->basic_publish(
 			$msg,
@@ -118,4 +118,14 @@ class RabbitMQ
 
 		return $messageCounter;
 	}
+
+    /**
+     * TODO: add to config
+     *
+     * @return string
+     */
+    protected function serialize(): string
+    {
+        return serialize($this->data);
+    }
 }

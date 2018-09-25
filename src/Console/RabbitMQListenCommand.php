@@ -8,6 +8,7 @@ use Ipunkt\LaravelRabbitMQ\DropsEvent;
 use Ipunkt\LaravelRabbitMQ\EventMapper\EventMapper;
 use Ipunkt\LaravelRabbitMQ\Events\ExceptionInRabbitMQEvent;
 use Ipunkt\LaravelRabbitMQ\RabbitMQ\Builder\RabbitMQExchangeBuilder;
+use Ipunkt\LaravelRabbitMQ\Serializer\Serializer;
 use Ipunkt\LaravelRabbitMQ\TakesRoutingKey;
 use Ipunkt\LaravelRabbitMQ\TakesRoutingMatches;
 
@@ -30,17 +31,23 @@ class RabbitMQListenCommand extends Command {
 	 */
 	private $logger;
 
+    /**
+     * @var Serializer $serializer
+     */
+	private $serializer;
+
 	/**
 	 * RabbitMQListenCommand constructor.
 	 * @param EventMapper $eventMapper
 	 * @param RabbitMQExchangeBuilder $exchangeBuilder
 	 * @param LogManager $logger
 	 */
-	public function __construct( EventMapper $eventMapper, RabbitMQExchangeBuilder $exchangeBuilder, LogManager $logger ) {
+	public function __construct( EventMapper $eventMapper, RabbitMQExchangeBuilder $exchangeBuilder, LogManager $logger, Serializer $serializer) {
 		parent::__construct();
 		$this->eventMapper = $eventMapper;
 		$this->exchangeBuilder = $exchangeBuilder;
 		$this->logger = $logger;
+		$this->serializer = $serializer;
 	}
 
 	public function handle() {
@@ -196,6 +203,6 @@ class RabbitMQListenCommand extends Command {
      */
 	protected function unserialize($msg)
     {
-        return unserialize($msg->body);
+        return $this->serializer->unserialize($msg->body);
     }
 }

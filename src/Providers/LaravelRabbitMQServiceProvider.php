@@ -11,6 +11,7 @@ use Ipunkt\LaravelRabbitMQ\EventMapper\KeyToRegex;
 use Ipunkt\LaravelRabbitMQ\Logging\CreateRabbitmqLogger;
 use Ipunkt\LaravelRabbitMQ\Logging\Monolog\HandlerBuilder;
 use Ipunkt\LaravelRabbitMQ\RabbitMQ\Builder\RabbitMQExchangeBuilder;
+use Ipunkt\LaravelRabbitMQ\Serializer\Serializer;
 
 class LaravelRabbitMQServiceProvider extends ServiceProvider {
 	/**
@@ -30,7 +31,12 @@ class LaravelRabbitMQServiceProvider extends ServiceProvider {
 			return new RabbitMQExchangeBuilder( config( 'laravel-rabbitmq.queues' ) );
 		} );
 
-		$this->app->bind( CreateRabbitmqLogger::class, function () {
+        $this->app->singleton( Serializer::class, function () {
+            return new RabbitMQExchangeBuilder( config( 'laravel-rabbitmq.serialize' ) );
+        } );
+
+
+        $this->app->bind( CreateRabbitmqLogger::class, function () {
 			$builder = $this->app->make( HandlerBuilder::class );
 
 			$queueIdentifier = config( 'laravel-rabbitmq.logging.queue-identifier' );

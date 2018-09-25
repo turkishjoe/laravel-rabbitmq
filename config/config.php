@@ -4,6 +4,9 @@
  * Package configuration
  */
 return [
+    'serialize'=>[
+        'type'=>'json' //json|serialize
+    ],
 	'queues' => [
 
 		//  queue identifier to listen on

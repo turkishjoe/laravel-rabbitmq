@@ -3,6 +3,7 @@
 namespace Ipunkt\LaravelRabbitMQ;
 
 use Ipunkt\LaravelRabbitMQ\RabbitMQ\Builder\RabbitMQExchangeBuilder;
+use Ipunkt\LaravelRabbitMQ\Serializer\Serializer;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMQ
@@ -28,6 +29,11 @@ class RabbitMQ
 	 */
 	private $exchangeBuilder;
 
+    /**
+     * @var Serializer
+     */
+	private $serializer;
+
 	/**
 	 * Return from event handler to indicate the message was successfully processed
 	 */
@@ -42,8 +48,9 @@ class RabbitMQ
 	 * RabbitMQ constructor.
 	 * @param RabbitMQExchangeBuilder $exchangeBuilder
 	 */
-	public function __construct( RabbitMQExchangeBuilder $exchangeBuilder) {
+	public function __construct( RabbitMQExchangeBuilder $exchangeBuilder, Serializer $serializer) {
 		$this->exchangeBuilder = $exchangeBuilder;
+		$this->serializer = $serializer;
 	}
 
 	public function data(array $data) : self
@@ -126,6 +133,6 @@ class RabbitMQ
      */
     protected function serialize(): string
     {
-        return serialize($this->data);
+        return $this->serializer->serialize($this->data);
     }
 }
